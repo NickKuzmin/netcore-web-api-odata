@@ -34,10 +34,24 @@ namespace WebApi.OData.Controllers
             },
         };
 
-        [EnableQuery]
-        public OrderApiModel[] Get(ODataQueryOptions<OrderApiModel> queryOptions)
+        private ApplicationDbContext db;
+
+        public OrderController(ApplicationDbContext context)
         {
-            return _orders.ToArray();
+            db = context;
+        }
+
+        [EnableQuery]
+        // /Shop/Order
+        public IQueryable<OrderApiModel> Get(ODataQueryOptions<OrderApiModel> queryOptions)
+        {
+            return db.Orders.Select(x => new OrderApiModel
+            {
+                Uid = x.Uid,
+                Title = x.Title,
+                CreationDate = x.CreationDate,
+                ModifiedDate = x.ModifiedDate
+            });
         }
     }
 }
